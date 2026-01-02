@@ -1,10 +1,19 @@
-import { createUserService, listUsersService, updateUserService, getUserService, deleteUserService } from "../services/user.service.js";
+import { createUserService, listUsersService, updateUserService, getUserService, deleteUserService, createUserBulkService } from "../services/user.service.js";
 import { SuccessResponse, ErrorResponse } from "../utils/response.js";
 
 export const createUser = async (req, res) => {
   try {
     const user = await createUserService(req.body);
     return SuccessResponse(res, { data: user, message: "User created successfully" });
+  } catch (err) {
+    return ErrorResponse(res, { code: 400, message: err.message });
+  }
+};
+
+export const createUserBulk = async (req, res) => {
+  try {
+    const users = await createUserBulkService(req.body);
+    return SuccessResponse(res, { data: users, message: "Users created successfully" });
   } catch (err) {
     return ErrorResponse(res, { code: 400, message: err.message });
   }

@@ -33,6 +33,24 @@ export async function createUserService(data) {
   
 }
 
+export async function createUserBulkService(data){
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error("Data must be a non-empty array");
+  }
+
+  const payload = data.map((item) => {
+    if (!item.email) throw new Error("User email is required");
+
+    return {
+      ...item,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+  });
+
+  return await User.bulkCreate(payload);
+}
+
 export async function listUsersService({take, skip, search}) {
   const limit = parseInt(take) || 10;
   const offset = parseInt(skip) || 0;

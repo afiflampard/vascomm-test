@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { auth } from "../middleware/auth.js";
-import { createUser, listUsers, getUserById, putUser, patchUser, deleteUser, getUserByMe } from "../controllers/user.controller.js";
+import { createUser, listUsers, getUserById, putUser, patchUser, deleteUser, getUserByMe, createUserBulk } from "../controllers/user.controller.js";
 
 const router = Router();
 
@@ -19,6 +19,22 @@ const router = Router();
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of items per page
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search query
  *     responses:
  *       200:
  *         description: List users
@@ -148,6 +164,30 @@ router.patch("/:id", auth, patchUser);
  *         description: User deleted
  */
 router.delete("/:id", auth, deleteUser);
+
+
+
+/**
+ * @swagger
+ * /users/bulk:
+ *   post:
+ *     summary: Create multiple users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               $ref: '#/components/schemas/UserCreate'
+ *     responses:
+ *       201:
+ *         description: Users created
+ */
+router.post("/bulk", auth, createUserBulk);
 
 
 export default router;
