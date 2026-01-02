@@ -1,8 +1,10 @@
 import {v4 as uuid} from "uuid"; 
 import db from "../models/index.js";
+import { Op } from "sequelize";
 import { ValidationUserCreate } from "../validation/user_validation.validation.js";
 import { password } from "bun";
 const User = db.User;
+
 
 const ALLOWED_FIELDS = [
   "first_name",
@@ -37,8 +39,12 @@ export async function listUsersService({take, skip, search}) {
   const where = {};
   
   if (search) {
-    where.name = { [Op.iLike]: `%${search}%` };
-  };
+    where[Op.or] = [
+      { first_name: { [Op.iLike]: `%${search}%` } },
+      { last_name: { [Op.iLike]: `%${search}%` } },
+      { email: { [Op.iLike]: `%${search}%` } },
+    ];
+  }
 
   
   const { rows, count } = await User.findAndCountAll({
