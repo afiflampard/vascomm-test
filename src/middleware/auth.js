@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
 import config from "../config/index.js";
+import { ErrorResponse } from "../utils/response.js";
 
 export function auth(req, res, next) {
   const header = req.headers.authorization;
-  if (!header) return res.status(401).json({ error: "Missing token" });
+  if (!header) return ErrorResponse(res, {code: 401, message: "Missing token", errors: null});
 
   const token = header.split(" ")[1];
 
@@ -16,7 +17,7 @@ export function auth(req, res, next) {
     }
 
     next();
-  } catch {
-    res.status(401).json({ error: "Invalid token" });
+  } catch(e) {
+    return ErrorResponse(res, {code: 401, message: "Invalid token", errors: null, error: e.message});
   }
 }
